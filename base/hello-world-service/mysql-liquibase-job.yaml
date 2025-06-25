@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-liquibase-job
+spec:
+  template:
+    spec:
+      initContainers:                    # <-- (1) Start here
+      - name: create-db
+        image: mysql:8.0                  # <-- (use mysql client image)
+        command:
+          - sh
+          - -c
+          - |
+            mysql -h mysql-service -P 27017 -u root -proot -e "CREATE DATABASE IF NOT EXISTS demo_db;"
+        env:
+          - name: MYSQL_PWD
+            value: root
+      containers:
+      - name: liquibase
+        image: nikhil575/liquibase-with-mysql-driver:latest
+        command:
+          - "liquibase"
+          - "--driver=com.mysql.cj.jdbc.Driver"
+          - "--url=jdbc:mysql://mysql-service:27017/demo_db"
+          - "--username=root"
+          - "--password=root"
+          - "--changeLogFile=changelog.xml"
+          - "--searchPath=/liquibase/changelog/"
+          - "update"
+        env:
+          - name: DB_HOST
+            value: "mysql-service"
+          - name: DB_PORT
+            value: "27017"
+          - name: DB_NAME
+            value: "demo_db"
+          - name: DB_USERNAME
+            value: "root"
+          - name: DB_PASSWORD
+            value: "root"
+      restartPolicy: OnFailure
+  backoffLimit: 4

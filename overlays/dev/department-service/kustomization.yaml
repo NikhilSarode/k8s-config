@@ -1,0 +1,4 @@
+resources:
+  - ../../../base/department-service/dept-webapp.yaml
+patchesStrategicMerge:
+  - image-patch.yaml

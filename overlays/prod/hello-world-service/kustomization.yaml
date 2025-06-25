@@ -1,0 +1,5 @@
+resources:
+  - ../../../base/hello-world-service/webapp.yaml
+patchesStrategicMerge:
+  - image-patch.yaml
+  - replicas-patch.yaml

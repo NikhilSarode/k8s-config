@@ -1,0 +1,11 @@
+# .gitignore
+/build/
+.gradle/
+out/
+*.iml
+*.class
+.idea/
+*.log
+*.jar
+.DS_Store
+.env

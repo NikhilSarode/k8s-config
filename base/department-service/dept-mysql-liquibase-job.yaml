@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dept-mysql-liquibase-job
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: create-db
+          image: bitnami/mysql:8.0-debian-11
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for MySQL to be ready..."
+              until mysql -h dept-mysql-service -P 27018 -u root -proot -e "SELECT 1" > /dev/null 2>&1; do
+                sleep 2
+              done
+              echo "MySQL is up. Creating database if not exists..."
+              mysql -h dept-mysql-service -P 27018 -u root -proot -e "CREATE DATABASE IF NOT EXISTS dept_db;"
+      containers:
+        - name: liquibase
+          image: nikhil575/liquibase-with-dept-mysql-driver:latest
+          command:
+            - "liquibase"
+            - "--driver=com.mysql.cj.jdbc.Driver"
+            - "--url=jdbc:mysql://dept-mysql-service:27018/dept_db"
+            - "--username=root"
+            - "--password=root"
+            - "--changeLogFile=changelog.xml"
+            - "--searchPath=/liquibase/changelog/"
+            - "update"
+          env:
+            - name: DB_HOST
+              value: "dept-mysql-service"
+            - name: DB_PORT
+              value: "27018"
+            - name: DB_NAME
+              value: "dept_db"
+            - name: DB_USERNAME
+              value: "root"
+            - name: DB_PASSWORD
+              value: "root"
+      restartPolicy: OnFailure
+  backoffLimit: 4
