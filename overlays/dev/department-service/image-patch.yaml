@@ -7,4 +7,4 @@ spec:
     spec:
       containers:
         - name: dept-webapp
-          image: nikhil575/helloworldtest:latest
+          image: nikhil575/departmentservice:latest

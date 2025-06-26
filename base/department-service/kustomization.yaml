@@ -1,0 +1,7 @@
+resources:
+  - dept-mysql-config.yaml
+  - dept-mysql-secret.yaml
+  - dept-mysql-liquibase-job.yaml
+  - dept-webapp.yaml
+commonLabels:
+  service: department
