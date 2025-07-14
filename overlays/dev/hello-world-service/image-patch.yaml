@@ -7,4 +7,4 @@ spec:
     spec:
       containers:
         - name: webapp
-          image: nikhil575/helloworldtest:dev1
+          image: nikhil575/helloworldtest:latest
