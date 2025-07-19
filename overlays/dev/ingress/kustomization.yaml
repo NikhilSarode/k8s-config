@@ -3,3 +3,4 @@ resources:
 
 patchesStrategicMerge:
   - patch-ingress-host.yaml
+  - patch-ingress-service.yaml

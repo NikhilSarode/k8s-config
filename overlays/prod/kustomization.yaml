@@ -1,7 +1,5 @@
 resources:
   - department-service
   - hello-world-service
+  - metallb
   - ingress
-
-patchesStrategicMerge:
-  - patch-ingress-host.yaml
