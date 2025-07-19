@@ -1,6 +1,4 @@
 resources:
-  - mysql-config.yaml
-  - mysql-secret.yaml
   - service-name-config.yaml
   - webapp.yaml
 commonLabels:

@@ -1,0 +1,2 @@
+resources:
+  - dept-mysql-liquibase-job.yaml

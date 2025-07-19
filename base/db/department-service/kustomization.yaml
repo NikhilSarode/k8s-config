@@ -1,6 +1,4 @@
 resources:
   - dept-mysql-config.yaml
   - dept-mysql-secret.yaml
-  - dept-webapp.yaml
-commonLabels:
-  service: department
+  - dept-mysql.yaml

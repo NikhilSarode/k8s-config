@@ -1,0 +1,3 @@
+resources:
+  - department-service
+  - hello-world-service

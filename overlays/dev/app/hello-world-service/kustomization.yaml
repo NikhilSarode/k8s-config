@@ -1,4 +1,4 @@
 resources:
-  - ../../../base/hello-world-service
+  - ../../../../base/app/hello-world-service
 patchesStrategicMerge:
   - image-patch.yaml
