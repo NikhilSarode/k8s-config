@@ -2,5 +2,4 @@ resources:
   - ../../../base/ingress
 
 patchesStrategicMerge:
-  - patch-ingress-host.yaml
   - patch-ingress-service.yaml

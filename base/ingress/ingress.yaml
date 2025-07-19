@@ -7,8 +7,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: api.mycompany.com
-      http:
+    - http:
         paths:
           - path: /api/(hello-world.*)
             pathType: ImplementationSpecific
