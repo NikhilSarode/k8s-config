@@ -56,12 +56,16 @@ to verify whether process is successful "Get-Process kubectl" in powershell
 
 
 
-kubectl apply -k overlays/dev
+kubectl apply -k overlays/dev/db
+kubectl apply -k overlays/dev/liquibase
+kubectl apply -k overlays/dev/app
+kubectl apply -k overlays/dev/ingress
+
 kubectl apply -k overlays/prod
 
 
 -------------------------------------------------------------------------------------------------------------------------
-ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.232.156.252
+ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.126.93.71
 -------------------------------------------------------------------------------------------------------------------------
 Go to EC2 → Instances → Select your instance → Security → Security Groups:
 Click the attached security group
@@ -178,4 +182,8 @@ telepresence connect
 telepresence intercept dept-webapp-deployment --port 3001:3001
 
 telepresence quit
+-------------------------------------------------------------------------------------------------------------------------
+Test within minikube
+kubectl run test-pod --image=nginx -it --rm -- bash
+curl http://api-gateway:8060/api/hello-world/hello
 -------------------------------------------------------------------------------------------------------------------------
