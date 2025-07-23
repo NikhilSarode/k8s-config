@@ -60,12 +60,13 @@ kubectl apply -k overlays/dev/db
 kubectl apply -k overlays/dev/liquibase
 kubectl apply -k overlays/dev/app
 kubectl apply -k overlays/dev/ingress
+kubectl apply -f overlays/dev/ingress/patch-ingress-service.yaml
 
 kubectl apply -k overlays/prod
 
 
 -------------------------------------------------------------------------------------------------------------------------
-ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.126.93.71
+ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.234.116.222
 -------------------------------------------------------------------------------------------------------------------------
 Go to EC2 → Instances → Select your instance → Security → Security Groups:
 Click the attached security group
@@ -95,7 +96,7 @@ ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" -L 8085:localhost:8085 ubunt
 -------------------------------------------------------------------------------------------------------------------------
 
 
-scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" "C:\Users\Nikhil\Desktop\expose-minikube-api.sh" ubuntu@13.232.156.252:/home/ubuntu/projects
+scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" "C:\Users\Nikhil\Desktop\agent-injector.yaml" ubuntu@13.233.110.122:/home/ubuntu/projects
 
 scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.127.57.79:/home/ubuntu/projects/setup-nginx-reverse-proxy.sh "C:\Users\Nikhil\Desktop\fromec2"
 
@@ -105,13 +106,15 @@ http://13.201.10.144:30080/api/hello-world/hello
 
 curl http://192.168.49.2:30080/api/hello-world/hello
 
+http://dev-api.mycompany.com/api/hello-world/employees/department
+
 
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.10/config/manifests/metallb-native.yaml
 
 kubectl create secret generic -n metallb-system memberlist \
   --from-literal=secretkey="$(openssl rand -base64 128)"
 
--------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------IMPORTANT 1----------------------------------------------------------------
 forward traffic from ec2 host 80 port to minikube ip on ec2 
 make sure aws allows HTTP inbound rule on port 80
 
@@ -124,7 +127,7 @@ chmod +x setup-nginx-reverse-proxy.sh
 
 enter IP:- 192.168.49.2 (minikubeip)
 enter port:- 80 (EC2 port to listen on)
--------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
 clean up existing NGINX setup from EC2:-
 
 sudo systemctl stop nginx
@@ -142,14 +145,22 @@ powershell -Command "((Get-Content -Path $env:SystemRoot\System32\drivers\etc\ho
 -------------------------------------------------------------------------------------------------------------------------
 install telepresence on EC2
 
-curl -fL https://app.getambassador.io/download/tel2/linux/amd64/latest/telepresence -o telepresence
-chmod a+x telepresence
+curl -fL https://github.com/telepresenceio/telepresence/releases/download/v2.20.2/telepresence-linux-amd64 -o telepresence
+chmod +x telepresence
 sudo mv telepresence /usr/local/bin/
-
 check with:- telepresence version
+
+Now create telepresence pod traffic-manager
+telepresence helm install --namespace ambassador --create-namespace
+check with:- kubectl get pods -n ambassador
+You should see something like:
+NAME                               READY   STATUS    RESTARTS   AGE
+traffic-manager-xxxxxxxxxx-xxxxx   1/1     Running   0          xx
+
 -------------------------------------------------------------------------------------------------------------------------
 Install telepresence on Windows local
-download exe
+Go to :- https://github.com/telepresenceio/telepresence/releases
+download v2.20.2 windows zip
 keep it in some path
 put that path in environment variables
 
@@ -162,9 +173,9 @@ sudo socat TCP-LISTEN:8443,fork TCP:192.168.49.2:8443  --> asks EC2 to forward i
 Also remember to add inbound rules on EC2 to allow port 8443 https and http traffic
 
 Now copy certificates from EC2 minikube to windows local
-scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.232.156.252:/home/ubuntu/.minikube/ca.crt C:\Users\Nikhil\.kube\home\ubuntu\.minikube\
-scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.232.156.252:/home/ubuntu/.minikube/profiles/minikube/client.crt C:\Users\Nikhil\.kube\home\ubuntu\.minikube\profiles\minikube\
-scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.232.156.252:/home/ubuntu/.minikube/profiles/minikube/client.key C:\Users\Nikhil\.kube\home\ubuntu\.minikube\profiles\minikube\
+scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.234.116.222:/home/ubuntu/.minikube/ca.crt C:\Users\Nikhil\.kube\home\ubuntu\.minikube\
+scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.234.116.222:/home/ubuntu/.minikube/profiles/minikube/client.crt C:\Users\Nikhil\.kube\home\ubuntu\.minikube\profiles\minikube\
+scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.234.116.222:/home/ubuntu/.minikube/profiles/minikube/client.key C:\Users\Nikhil\.kube\home\ubuntu\.minikube\profiles\minikube\
 
 On windows local laptop modify this file:-
 C:\Users\Nikhil\.kube\config
@@ -173,9 +184,10 @@ replace the above 3 copied certificate paths
 
 
 On windows local powershell do this
-ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" -L 8443:192.168.49.2:8443 ubuntu@13.232.156.252
-it tells forward local traffic to EC2 
+ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" -L 8443:192.168.49.2:8443 ubuntu@13.234.116.222
+it forwards local traffic to EC2 
 
+Now verify on your local laptop by doing "kubectl get pods", it should show EC2 pods. Means your local is now configured to use EC2 minikube.
 -------------------------------------------------------------------------------------------------------------------------
 
 telepresence connect
@@ -187,3 +199,13 @@ Test within minikube
 kubectl run test-pod --image=nginx -it --rm -- bash
 curl http://api-gateway:8060/api/hello-world/hello
 -------------------------------------------------------------------------------------------------------------------------
+helm repo add datawire https://app.getambassador.io
+helm repo update
+
+kubectl create namespace telepresence
+
+helm install traffic-manager datawire/telepresence --namespace telepresence
+-------------------------------------------------------------------------------------------------------------------------
+java -jar build/libs/DepartmentService-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
+
+kubectl delete <resource-type> <name> -n ambassador --force --grace-period=0
