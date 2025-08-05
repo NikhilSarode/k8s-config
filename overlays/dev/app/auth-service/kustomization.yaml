@@ -1,0 +1,4 @@
+resources:
+  - ../../../../base/app/auth-service
+patchesStrategicMerge:
+  - image-patch.yaml

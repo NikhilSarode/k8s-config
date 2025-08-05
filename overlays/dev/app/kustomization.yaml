@@ -1,4 +1,5 @@
 resources:
   - department-service
   - hello-world-service
+  - auth-service
   - api-gateway

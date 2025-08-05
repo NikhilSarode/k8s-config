@@ -1,0 +1,4 @@
+resources:
+  - auth-service.yaml
+commonLabels:
+  service: authservice
