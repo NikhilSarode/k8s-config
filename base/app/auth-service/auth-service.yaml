@@ -33,4 +33,4 @@ spec:
     app: auth-service
   ports:
     - port: 8055
-      targetPort: 8055
+      targetPort: 8050

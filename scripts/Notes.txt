@@ -9,6 +9,7 @@ then do mysql commands
 To deploy in the cluster:-
 
 minikube start --driver=docker 		(only if not already started)
+minikube start --driver=docker --memory=4096 --cpus=2
 kubectl apply -f k8s/mysql-config.yaml
 kubectl apply -f k8s/service-name-config.yaml
 kubectl apply -f k8s/mysql-secret.yaml
@@ -18,7 +19,7 @@ kubectl apply -f k8s/webapp.yaml
 
 kubectl port-forward service/webapp-service 8010:3000
 
-
+kubectl describe node
 
 kubectl get all
 kubectl get pods
@@ -66,7 +67,7 @@ kubectl apply -k overlays/prod
 
 
 -------------------------------------------------------------------------------------------------------------------------
-ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.234.116.222
+ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.233.134.192
 -------------------------------------------------------------------------------------------------------------------------
 Go to EC2 → Instances → Select your instance → Security → Security Groups:
 Click the attached security group
@@ -102,12 +103,14 @@ scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.127.57.79:/home/ub
 
 -------------------------------------------------------------------------------------------------------------------------
 
-http://13.201.10.144:30080/api/hello-world/hello
+http://13.233.134.192:30080/api/hello-world/hello
 
 curl http://192.168.49.2:30080/api/hello-world/hello
 
 http://dev-api.mycompany.com/api/hello-world/employees/department
 
+
+kubectl get nodes
 
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.10/config/manifests/metallb-native.yaml
 
