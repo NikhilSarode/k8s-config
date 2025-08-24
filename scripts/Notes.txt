@@ -39,6 +39,9 @@ docker tag helloworldtest nikhil575/helloworldtest:latest
 
 docker push nikhil575/helloworldtest:latest
 
+docker-compose up -d
+docker-compose down -v
+
 
 Question:- On local development if i want to upgrade one of the microservice for which other team
 has made some changes then how to do it ?
