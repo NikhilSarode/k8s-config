@@ -1,5 +1,4 @@
 resources:
-  - service-name-config.yaml
   - webapp.yaml
 commonLabels:
   service: hello-world
