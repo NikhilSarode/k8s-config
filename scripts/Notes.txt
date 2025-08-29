@@ -19,6 +19,8 @@ kubectl apply -f k8s/webapp.yaml
 
 kubectl port-forward service/webapp-service 8010:3000
 
+kubectl get svc -n ingress-nginx
+
 kubectl describe node
 
 kubectl get all
@@ -27,6 +29,12 @@ kubectl logs <pod-name> -f
 kubectl logs <pod-name>
 kubectl delete deployment mysql-deployment
 kubectl delete pod <pod-name>
+
+kubectl get nodes  -- if it shows NotReady then thats the problem
+kubectl describe node minikube | grep -A5 Allocated
+then do
+kubectl stop
+kubectl start
 
 
 
@@ -114,7 +122,7 @@ scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.127.57.79:/home/ub
 
 -------------------------------------------------------------------------------------------------------------------------
 
-http://13.233.134.192:30080/api/hello-world/hello
+http://65.2.126.129:30080/api/hello-world/hello
 
 curl http://192.168.49.2:30080/api/hello-world/hello
 
