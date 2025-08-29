@@ -59,6 +59,12 @@ powershell -ExecutionPolicy Bypass -File stop-port-forward.ps1
 to verify whether process is successful "Get-Process kubectl" in powershell
 
 
+----------------------------------------Deploy Procedure---------------------------------------------
+Install Kafka:-
+helm repo add strimzi https://strimzi.io/charts/
+helm repo update
+helm install strimzi-operator strimzi/strimzi-kafka-operator -n kafka --create-namespace
+
 
 kubectl apply -k overlays/dev/db
 kubectl apply -k overlays/dev/liquibase
@@ -72,7 +78,7 @@ kubectl apply -k overlays/prod
 
 
 -------------------------------------------------------------------------------------------------------------------------
-ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.233.134.192
+ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@65.2.126.129
 -------------------------------------------------------------------------------------------------------------------------
 Go to EC2 → Instances → Select your instance → Security → Security Groups:
 Click the attached security group

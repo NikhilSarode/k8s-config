@@ -1,2 +1,2 @@
 resources:
-  - ../../../base/kafka/kafka-topic
+  - ../../../../base/kafka/kafka-topic
