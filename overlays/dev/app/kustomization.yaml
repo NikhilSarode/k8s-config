@@ -1,5 +1,7 @@
 resources:
+  - service-name-config
   - department-service
   - hello-world-service
   - auth-service
   - api-gateway
+  - notification-service

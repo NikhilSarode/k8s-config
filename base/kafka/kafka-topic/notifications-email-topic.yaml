@@ -1,0 +1,11 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: notifications-email
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: my-kafka
+spec:
+  topicName: notifications.email
+  partitions: 3
+  replicas: 1

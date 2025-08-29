@@ -1,0 +1,4 @@
+resources:
+  - notification-service.yaml
+commonLabels:
+  service: notificationservice

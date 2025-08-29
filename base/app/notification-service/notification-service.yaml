@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service-deployment
+  labels:
+    app: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: nikhil575/notification-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8030
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "default"
+            - name: KAFKA_CONSUMER_GROUP
+              value: "notification-group-v1"
+            - name: EMAIL_TOPIC
+              value: "notifications.email"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: service-name-config
+                  key: kafka-bootstrap-servers
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+spec:
+  selector:
+    app: notification-service
+  ports:
+    - port: 8020
+      targetPort: 8030

@@ -62,6 +62,8 @@ to verify whether process is successful "Get-Process kubectl" in powershell
 
 kubectl apply -k overlays/dev/db
 kubectl apply -k overlays/dev/liquibase
+kubectl apply -k overlays/dev/kafka
+kubectl apply -k overlays/dev/kafka/kafka-topic
 kubectl apply -k overlays/dev/app
 kubectl apply -k overlays/dev/ingress
 kubectl apply -f overlays/dev/ingress/patch-ingress-service.yaml
