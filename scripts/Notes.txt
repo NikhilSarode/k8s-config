@@ -86,7 +86,7 @@ kubectl apply -k overlays/prod
 
 
 -------------------------------------------------------------------------------------------------------------------------
-ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@65.2.126.129
+ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.233.165.106
 -------------------------------------------------------------------------------------------------------------------------
 Go to EC2 → Instances → Select your instance → Security → Security Groups:
 Click the attached security group
@@ -122,7 +122,7 @@ scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.127.57.79:/home/ub
 
 -------------------------------------------------------------------------------------------------------------------------
 
-http://65.2.126.129:30080/api/hello-world/hello
+http://13.233.165.106:30080/api/hello-world/hello
 
 curl http://192.168.49.2:30080/api/hello-world/hello
 
