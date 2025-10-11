@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: service-name-config
 data:
-  dept-service-name: dept-webapp-service:3001/dept
+  dept-service-name: dept-webapp-service:3001
   kafka-bootstrap-servers: my-kafka-kafka-bootstrap.kafka.svc.cluster.local:9092
