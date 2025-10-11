@@ -7,7 +7,7 @@ spec:
     spec:
       initContainers:
         - name: create-db
-          image: bitnami/mysql:8.0-debian-11
+          image: mysql:8.0
           command:
             - sh
             - -c
