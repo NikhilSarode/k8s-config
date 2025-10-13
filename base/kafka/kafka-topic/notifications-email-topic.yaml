@@ -1,11 +1,22 @@
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaTopic
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: notifications-email
+  name: create-notifications-topic
   namespace: kafka
-  labels:
-    strimzi.io/cluster: my-kafka
 spec:
-  topicName: notifications.email
-  partitions: 3
-  replicas: 1
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: create-topic
+          image: confluentinc/cp-kafka:7.4.1
+          command:
+            - sh
+            - -c
+            - |
+              echo "Creating topic notifications.email..."
+              kafka-topics --create \
+                --topic notifications.email \
+                --partitions 3 \
+                --replication-factor 1 \
+                --bootstrap-server kafka:9092 || echo "Topic may already exist"

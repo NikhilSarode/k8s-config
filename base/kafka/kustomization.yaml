@@ -1,2 +1,2 @@
 resources:
-  - kafka-cluster.yaml
+  - kafka-deployment.yaml
