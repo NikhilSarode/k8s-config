@@ -86,7 +86,7 @@ kubectl apply -k overlays/prod
 
 
 -------------------------------------------------------------------------------------------------------------------------
-ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.233.165.106
+ssh -i "C:\Users\poorv\OneDrive\Desktop\ubuntu-dev-key.pem" ubuntu@65.2.128.1
 -------------------------------------------------------------------------------------------------------------------------
 Go to EC2 → Instances → Select your instance → Security → Security Groups:
 Click the attached security group
