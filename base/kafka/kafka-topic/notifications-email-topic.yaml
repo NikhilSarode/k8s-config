@@ -19,4 +19,4 @@ spec:
                 --topic notifications.email \
                 --partitions 3 \
                 --replication-factor 1 \
-                --bootstrap-server kafka:9092 || echo "Topic may already exist"
+                --bootstrap-server kafka.kafka.svc.cluster.local:9092 || echo "Topic may already exist"

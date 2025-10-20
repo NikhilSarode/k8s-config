@@ -66,13 +66,7 @@ powershell -ExecutionPolicy Bypass -File stop-port-forward.ps1
 
 to verify whether process is successful "Get-Process kubectl" in powershell
 
-
 ----------------------------------------Deploy Procedure---------------------------------------------
-Install Kafka:-
-helm repo add strimzi https://strimzi.io/charts/
-helm repo update
-helm install strimzi-operator strimzi/strimzi-kafka-operator -n kafka --create-namespace
-
 
 kubectl apply -k overlays/dev/db
 kubectl apply -k overlays/dev/liquibase
@@ -84,6 +78,12 @@ kubectl apply -f overlays/dev/ingress/patch-ingress-service.yaml
 
 kubectl apply -k overlays/prod
 
+----------------------------------------Kafka Test---------------------------------------------
+kubectl run kafka-client --rm -it --image=apache/kafka:3.8.1 --restart=Never -n kafka -- bash
+
+/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --create --topic test --partitions 1 --replication-factor 1
+echo "hello kafka" | /opt/kafka/bin/kafka-console-producer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test
+/opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test --from-beginning
 
 -------------------------------------------------------------------------------------------------------------------------
 ssh -i "C:\Users\poorv\OneDrive\Desktop\ubuntu-dev-key.pem" ubuntu@65.2.128.1
@@ -106,19 +106,20 @@ Save
 
 -------------------------------------------------------------------------------------------------------------------------
 kubectl port-forward --namespace ingress-nginx service/ingress-nginx-controller 8085:80
+Test:- http://localhost:8085/api/hello-world/hello (if minikube is on local laptop)
 
 EC2 accepts requests on 8085. Its then forwarded to port 80 of minikube cluster where ingress controller listens. Ingress controller then forwards it to respective microservice based on routing
 With this command EC2 will accept requests made to its localhost:8085. But if you do like <EC2_PUBLIC_IP>:8085 it wont work
 because by default, kubectl port-forward only binds to localhost for security reasons. 
 So to solve this we tunnel EC2 8085 port to our laptop with below command.
 
-ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" -L 8085:localhost:8085 ubuntu@13.201.10.144
+ssh -i "C:\Users\poorv\OneDrive\Desktop\ubuntu-dev-key.pem" -L 8085:localhost:8085 ubuntu@13.201.10.144
 -------------------------------------------------------------------------------------------------------------------------
 
 
-scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" "C:\Users\Nikhil\Desktop\agent-injector.yaml" ubuntu@13.233.110.122:/home/ubuntu/projects
+scp -i "C:\Users\poorv\OneDrive\Desktop\ubuntu-dev-key.pem" "C:\Users\poorv\OneDrive\Desktop\kafka-deployment.yaml" ubuntu@65.2.128.1:/home/ubuntu/projects
 
-scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.127.57.79:/home/ubuntu/projects/setup-nginx-reverse-proxy.sh "C:\Users\Nikhil\Desktop\fromec2"
+scp -i "C:\Users\poorv\OneDrive\Desktop\ubuntu-dev-key.pem" ubuntu@13.127.57.79:/home/ubuntu/projects/setup-nginx-reverse-proxy.sh "C:\Users\poorv\OneDrive\Desktop\fromec2"
 
 -------------------------------------------------------------------------------------------------------------------------
 
@@ -195,9 +196,9 @@ sudo socat TCP-LISTEN:8443,fork TCP:192.168.49.2:8443  --> asks EC2 to forward i
 Also remember to add inbound rules on EC2 to allow port 8443 https and http traffic
 
 Now copy certificates from EC2 minikube to windows local
-scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.234.116.222:/home/ubuntu/.minikube/ca.crt C:\Users\Nikhil\.kube\home\ubuntu\.minikube\
-scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.234.116.222:/home/ubuntu/.minikube/profiles/minikube/client.crt C:\Users\Nikhil\.kube\home\ubuntu\.minikube\profiles\minikube\
-scp -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" ubuntu@13.234.116.222:/home/ubuntu/.minikube/profiles/minikube/client.key C:\Users\Nikhil\.kube\home\ubuntu\.minikube\profiles\minikube\
+scp -i "C:\Users\poorv\OneDrive\Desktop\ubuntu-dev-key.pem" ubuntu@13.234.116.222:/home/ubuntu/.minikube/ca.crt C:\Users\Nikhil\.kube\home\ubuntu\.minikube\
+scp -i "C:\Users\poorv\OneDrive\Desktop\ubuntu-dev-key.pem" ubuntu@13.234.116.222:/home/ubuntu/.minikube/profiles/minikube/client.crt C:\Users\Nikhil\.kube\home\ubuntu\.minikube\profiles\minikube\
+scp -i "C:\Users\poorv\OneDrive\Desktop\ubuntu-dev-key.pem" ubuntu@13.234.116.222:/home/ubuntu/.minikube/profiles/minikube/client.key C:\Users\Nikhil\.kube\home\ubuntu\.minikube\profiles\minikube\
 
 On windows local laptop modify this file:-
 C:\Users\Nikhil\.kube\config
@@ -206,7 +207,7 @@ replace the above 3 copied certificate paths
 
 
 On windows local powershell do this
-ssh -i "C:\Users\Nikhil\Desktop\ubuntu-dev-key.pem" -L 8443:192.168.49.2:8443 ubuntu@13.234.116.222
+ssh -i "C:\Users\poorv\OneDrive\Desktop\ubuntu-dev-key.pem" -L 8443:192.168.49.2:8443 ubuntu@13.234.116.222
 it forwards local traffic to EC2 
 
 Now verify on your local laptop by doing "kubectl get pods", it should show EC2 pods. Means your local is now configured to use EC2 minikube.
