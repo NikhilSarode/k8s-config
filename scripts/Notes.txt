@@ -50,6 +50,8 @@ docker push nikhil575/helloworldtest:latest
 docker-compose up -d
 docker-compose down -v
 
+kubectl exec -it <pod_name> -- sh   --> interactive mode
+
 
 Question:- On local development if i want to upgrade one of the microservice for which other team
 has made some changes then how to do it ?
@@ -232,3 +234,24 @@ helm install traffic-manager datawire/telepresence --namespace telepresence
 java -jar build/libs/DepartmentService-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
 
 kubectl delete <resource-type> <name> -n ambassador --force --grace-period=0
+
+-------------------------------------------------------------------------------------------------------------------------
+
+Couchbase on local:-
+Go to configuration-service--> couchbase
+Run docker compose up -d
+
+Then open http://localhost:8091 → Set up cluster.
+Cluster setup:- Username: Administrator  Password: password
+Create Bucket:Name: config_data  RAM Quota: 512MB
+Create Scope and Collection: Open Buckets → config_data → Scopes & Collections
+Add: Scope: reference_data  Collection: geoip_data
+Create Index:
+CREATE INDEX idx_geoip_range
+ON `config_data`.`reference_data`.`geoip_data`(`from`, `to`);
+
+Couchbase on prod:-
+deploy using k8s-config
+kubectl port-forward -n couchbase svc/couchbase-service 8091:8091
+This is probably not required but check :- modify C:\Windows\System32\drivers\etc\hosts add entry 127.0.0.1 couchbase-cluster-0.couchbase-service.couchbase.svc.cluster.local
+open url http://couchbase-cluster-0.couchbase-service.couchbase.svc.cluster.local:8091

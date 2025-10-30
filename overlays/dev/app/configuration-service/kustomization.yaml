@@ -1,0 +1,4 @@
+resources:
+  - ../../../../base/app/configuration-service
+patchesStrategicMerge:
+  - image-patch.yaml

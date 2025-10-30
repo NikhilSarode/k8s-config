@@ -1,0 +1,2 @@
+resources:
+  - ../../../../base/liquibase/configuration-service

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-mysql-deployment
+  labels:
+    app: config-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-mysql
+  template:
+    metadata:
+      labels:
+        app: config-mysql
+    spec:
+      containers:
+        - name: config-mysql
+          image: mysql:8.3
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: config-mysql-secret
+                  key: config-mysql-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-mysql-service
+spec:
+  selector:
+    app: config-mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306

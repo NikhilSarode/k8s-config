@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-config-updates-topic
+  namespace: kafka
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: create-topic
+          image: confluentinc/cp-kafka:7.4.1
+          command:
+            - sh
+            - -c
+            - |
+              echo "Creating topic config-updates..."
+              kafka-topics --create \
+                --topic config-updates \
+                --partitions 3 \
+                --replication-factor 1 \
+                --bootstrap-server kafka.kafka.svc.cluster.local:9092 || echo "Topic may already exist"

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-webapp-deployment
+  labels:
+    app: config-webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-webapp
+  template:
+    metadata:
+      labels:
+        app: config-webapp
+    spec:
+      containers:
+        - name: config-webapp
+          image: nikhil575/configuration-service:latest
+          ports:
+            - containerPort: 8025
+          env:
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: config-mysql-secret
+                  key: config-mysql-user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: config-mysql-secret
+                  key: config-mysql-password
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: config-mysql-config
+                  key: config-mysql-url
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: service-name-config
+                  key: kafka-bootstrap-servers
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-service
+spec:
+  selector:
+    app: config-webapp
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 8025

@@ -1,0 +1,4 @@
+resources:
+  - config-mysql-config.yaml
+  - config-mysql-secret.yaml
+  - config-mysql.yaml

@@ -1,0 +1,10 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-webapp-deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: config-webapp
+          image: nikhil575/configuration-service:latest

@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: config-mysql-liquibase-job
+spec:
+  backoffLimit: 4
+  template:
+    spec:
+      initContainers:
+        - name: create-db
+          image: mysql:8.0
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for MySQL to be ready..."
+              until mysql -h config-mysql-service -P 3306 -u root -proot -e "SELECT 1" > /dev/null 2>&1; do
+                sleep 2
+              done
+              echo "MySQL is up. Creating database if not exists..."
+              mysql -h config-mysql-service -P 3306 -u root -proot -e "CREATE DATABASE IF NOT EXISTS config_db;"
+      containers:
+        - name: liquibase
+          image: nikhil575/liquibase-with-config-mysql-driver:latest
+          command:
+            - "liquibase"
+            - "--driver=com.mysql.cj.jdbc.Driver"
+            - "--url=jdbc:mysql://config-mysql-service:3306/config_db"
+            - "--username=root"
+            - "--password=root"
+            - "--changeLogFile=changelog.xml"
+            - "--searchPath=/liquibase/changelog/"
+            - "update"
+          env:
+            - name: DB_HOST
+              value: "config-mysql-service"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              value: "config_db"
+            - name: DB_USERNAME
+              value: "root"
+            - name: DB_PASSWORD
+              value: "root"
+      restartPolicy: OnFailure
