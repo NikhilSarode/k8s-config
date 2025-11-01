@@ -52,6 +52,9 @@ docker-compose down -v
 
 kubectl exec -it <pod_name> -- sh   --> interactive mode
 
+Run temporary pod to test other pods
+kubectl run net-test --rm -it --image=busybox:1.36 --restart=Never -- sh
+
 
 Question:- On local development if i want to upgrade one of the microservice for which other team
 has made some changes then how to do it ?
@@ -74,6 +77,7 @@ kubectl apply -k overlays/dev/db
 kubectl apply -k overlays/dev/liquibase
 kubectl apply -k overlays/dev/kafka
 kubectl apply -k overlays/dev/kafka/kafka-topic
+kubectl apply -k overlays/dev/couchbase
 kubectl apply -k overlays/dev/app
 kubectl apply -k overlays/dev/ingress
 kubectl apply -f overlays/dev/ingress/patch-ingress-service.yaml

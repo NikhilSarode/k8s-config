@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-sync-webapp-deployment
+  labels:
+    app: config-sync-webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-sync-webapp
+  template:
+    metadata:
+      labels:
+        app: config-sync-webapp
+    spec:
+      containers:
+        - name: config-sync-webapp
+          image: nikhil575/config-sync-service:latest
+          ports:
+            - containerPort: 8026
+          env:
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: config-mysql-secret
+                  key: config-mysql-user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: config-mysql-secret
+                  key: config-mysql-password
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: config-mysql-config
+                  key: config-mysql-url
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: service-name-config
+                  key: kafka-bootstrap-servers
+            - name: COUCHBASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: couchbase-configmap
+                  key: couchbase-url
+            - name: COUCHBASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: couchbase-secret
+                  key: username
+            - name: COUCHBASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: couchbase-secret
+                  key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-sync-service
+spec:
+  selector:
+    app: config-sync-webapp
+  ports:
+    - protocol: TCP
+      port: 3003
+      targetPort: 8026

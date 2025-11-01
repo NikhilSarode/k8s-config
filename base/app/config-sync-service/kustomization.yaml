@@ -1,0 +1,4 @@
+resources:
+  - config-sync-webapp.yaml
+commonLabels:
+  service: config-sync

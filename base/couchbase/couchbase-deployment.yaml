@@ -40,14 +40,28 @@ metadata:
   name: couchbase-service
   namespace: couchbase
 spec:
-  type: NodePort
-  ports:
-    - name: admin
-      port: 8091
-      targetPort: 8091
-      nodePort: 30091
   selector:
     app: couchbase
+  ports:
+    - name: couchbase-admin
+      port: 8091
+      targetPort: 8091
+    - name: couchbase-views
+      port: 8092
+      targetPort: 8092
+    - name: couchbase-query
+      port: 8093
+      targetPort: 8093
+    - name: couchbase-search
+      port: 8094
+      targetPort: 8094
+    - name: couchbase-analytics
+      port: 8095
+      targetPort: 8095
+    - name: couchbase-kv
+      port: 11210
+      targetPort: 11210
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

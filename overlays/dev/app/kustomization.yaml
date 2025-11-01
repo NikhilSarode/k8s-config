@@ -5,3 +5,5 @@ resources:
   - auth-service
   - api-gateway
   - notification-service
+  - config-sync-service
+  - configuration-service

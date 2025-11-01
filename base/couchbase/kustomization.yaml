@@ -1,3 +1,5 @@
 resources:
+  - couchbase-configmap.yaml
+  - couchbase-secret.yaml
   - couchbase-deployment.yaml
   - couchbase-init-job.yaml
