@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: couchbase-init-job
+  namespace: couchbase
+spec:
+  ttlSecondsAfterFinished: 60  # auto-delete after 1 min
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: couchbase-init
+          image: couchbase:community-7.2.4
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              echo "Waiting for Couchbase to start..."
+              until curl -s http://couchbase-service.couchbase.svc.cluster.local:8091/ui/index.html > /dev/null; do
+                sleep 5
+              done
+
+              echo "Initializing Couchbase cluster..."
+              /opt/couchbase/bin/couchbase-cli cluster-init \
+                -c couchbase-service.couchbase.svc.cluster.local \
+                --cluster-username Administrator \
+                --cluster-password password \
+                --services data,index,query \
+                --cluster-ramsize 512 \
+                --cluster-index-ramsize 256 \
+                --cluster-fts-ramsize 256 || echo "Cluster may already be initialized."
+
+              echo "Creating bucket 'config_data'..."
+              /opt/couchbase/bin/couchbase-cli bucket-create \
+                -c couchbase-service.couchbase.svc.cluster.local \
+                -u Administrator -p password \
+                --bucket config_data \
+                --bucket-type couchbase \
+                --bucket-ramsize 256 \
+                --enable-flush 1 \
+                --storage-backend couchstore || echo "Bucket already exists."
+
+              echo "Creating scope and collection..."
+              /opt/couchbase/bin/couchbase-cli collection-manage \
+                -c couchbase-service.couchbase.svc.cluster.local \
+                -u Administrator -p password \
+                --bucket config_data \
+                --create-scope reference_data || echo "Scope already exists."
+
+              /opt/couchbase/bin/couchbase-cli collection-manage \
+                -c couchbase-service.couchbase.svc.cluster.local \
+                -u Administrator -p password \
+                --bucket config_data \
+                --create-collection reference_data.geoip_data || echo "Collection already exists."
+
+              echo "Couchbase setup complete."

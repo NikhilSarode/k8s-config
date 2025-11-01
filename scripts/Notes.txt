@@ -253,5 +253,4 @@ ON `config_data`.`reference_data`.`geoip_data`(`from`, `to`);
 Couchbase on prod:-
 deploy using k8s-config
 kubectl port-forward -n couchbase svc/couchbase-service 8091:8091
-This is probably not required but check :- modify C:\Windows\System32\drivers\etc\hosts add entry 127.0.0.1 couchbase-cluster-0.couchbase-service.couchbase.svc.cluster.local
-open url http://couchbase-cluster-0.couchbase-service.couchbase.svc.cluster.local:8091
+http://localhost:8091

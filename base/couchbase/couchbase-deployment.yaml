@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: couchbase
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: couchbase
+  namespace: couchbase
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: couchbase
+  template:
+    metadata:
+      labels:
+        app: couchbase
+    spec:
+      containers:
+        - name: couchbase
+          image: couchbase:community
+          ports:
+            - containerPort: 8091
+            - containerPort: 8092
+            - containerPort: 8093
+            - containerPort: 11210
+          volumeMounts:
+            - name: couchbase-data
+              mountPath: /opt/couchbase/var
+      volumes:
+        - name: couchbase-data
+          persistentVolumeClaim:
+            claimName: couchbase-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: couchbase-service
+  namespace: couchbase
+spec:
+  type: NodePort
+  ports:
+    - name: admin
+      port: 8091
+      targetPort: 8091
+      nodePort: 30091
+  selector:
+    app: couchbase
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: couchbase-pvc
+  namespace: couchbase
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
