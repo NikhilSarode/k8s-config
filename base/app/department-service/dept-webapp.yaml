@@ -35,6 +35,21 @@ spec:
                 configMapKeyRef:
                   name: dept-mysql-config
                   key: dept-mysql-url
+            - name: COUCHBASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: couchbase-configmap
+                  key: couchbase-url
+            - name: COUCHBASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: couchbase-secret
+                  key: username
+            - name: COUCHBASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: couchbase-secret
+                  key: password
 ---
 apiVersion: v1
 kind: Service

@@ -60,7 +60,7 @@ Question:- On local development if i want to upgrade one of the microservice for
 has made some changes then how to do it ?
 Ans:- just reapply the deployment
 kubectl apply -f k8s/webapp.yaml
-By doing so kubectl will detect that the docke r image version is changed. So it will redeploy.
+By doing so kubectl will detect that the docker image version is changed. So it will redeploy.
 In case you stick to the :latest tag then do
 kubectl rollout restart deployment order-service
 make sure that your yaml has  imagePullPolicy: Always
@@ -74,10 +74,10 @@ to verify whether process is successful "Get-Process kubectl" in powershell
 ----------------------------------------Deploy Procedure---------------------------------------------
 
 kubectl apply -k overlays/dev/db
-kubectl apply -k overlays/dev/liquibase
 kubectl apply -k overlays/dev/kafka
-kubectl apply -k overlays/dev/kafka/kafka-topic
 kubectl apply -k overlays/dev/couchbase
+kubectl apply -k overlays/dev/kafka/kafka-topic
+kubectl apply -k overlays/dev/liquibase
 kubectl apply -k overlays/dev/app
 kubectl apply -k overlays/dev/ingress
 kubectl apply -f overlays/dev/ingress/patch-ingress-service.yaml
