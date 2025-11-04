@@ -45,6 +45,11 @@ spec:
                 configMapKeyRef:
                   name: service-name-config
                   key: kafka-bootstrap-servers
+            - name: CONFIG_SERVICE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: service-name-config
+                  key: config-service-name
 ---
 apiVersion: v1
 kind: Service
