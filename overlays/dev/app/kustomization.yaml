@@ -7,3 +7,4 @@ resources:
   - notification-service
   - config-sync-service
   - configuration-service
+  - ui-frontend-service

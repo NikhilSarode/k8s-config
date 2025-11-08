@@ -1,0 +1,4 @@
+resources:
+  - ui-frontend.yaml
+commonLabels:
+  service: uifrontend

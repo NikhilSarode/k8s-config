@@ -16,3 +16,10 @@ spec:
                 name: api-gateway
                 port:
                   number: 8060
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ui-frontend-service
+                port:
+                  number: 7070

@@ -1,0 +1,4 @@
+resources:
+  - ../../../../base/app/ui-frontend-service
+patchesStrategicMerge:
+  - image-patch.yaml

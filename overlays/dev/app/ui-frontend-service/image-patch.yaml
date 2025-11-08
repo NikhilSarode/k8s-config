@@ -1,0 +1,10 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-frontend-deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: ui-frontend-deployment
+          image: nikhil575/ui-frontend:latest

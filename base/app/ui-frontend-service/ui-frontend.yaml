@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-frontend-deployment
+  labels:
+    app: ui-frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ui-frontend-deployment
+  template:
+    metadata:
+      labels:
+        app: ui-frontend-deployment
+    spec:
+      containers:
+        - name: ui-frontend-deployment
+          image: your-dockerhub-username/ui-frontend:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 7070   # Nginx listens on 7070 inside container
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui-frontend-service
+  labels:
+    app: ui-frontend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: ui-frontend-deployment
+  ports:
+    - port: 7070
+      targetPort: 7070
