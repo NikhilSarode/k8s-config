@@ -258,3 +258,9 @@ Couchbase on prod:-
 deploy using k8s-config
 kubectl port-forward -n couchbase svc/couchbase-service 8091:8091
 http://localhost:8091
+
+-------------------------------------------------------------------------------------------------------------------------
+for local tracing and logging
+just docker compose up on the efk folder
+navigate to opensearch dashboards. Go to Discover--> Create Index--> spring.app-logs* --> in time field put @timestamp
+Now again go to Discover and you will see the logs
