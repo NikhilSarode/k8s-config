@@ -221,6 +221,7 @@ Now verify on your local laptop by doing "kubectl get pods", it should show EC2 
 
 telepresence connect
 telepresence intercept dept-webapp-deployment --port 3001:3001
+telepresence intercept webapp-deployment --service webapp-service --port 8089:3000   //this worked on local minikube
 
 telepresence quit
 -------------------------------------------------------------------------------------------------------------------------
